@@ -17,7 +17,6 @@ package com.iptv.hn;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 
@@ -79,29 +78,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     }
 
-    protected void showTestAds() {
-//        AdsBean ads2 = new AdsBean();
-//        ads2.setModel_id(2);
-//        ads2.setMsg_id(2);
-//        ads2.setSpecial_type(AdsBean.ACTION_WEBVIEW);
-//        ads2.setSpecial_url("http://www.baidu.com");
-//        ads2.setDown_type(AdsBean.DOWNLOAD_FROM_SERVER);
-//        ads2.setDown_url("http://ftp-apk.pconline.com.cn/80c6e0508dba2e354041a209265c10b3/pub/download/201010/pconline1482411644018.apk");
-//        ads2.setShow_time(19);
-//        ads2.setFile_type(AdsBean.FILE_GIF);
-//        ads2.setFile_url("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1516780576215&di=3d6029c3d6d5828b1ecd9240123cac91&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01266756f8bf0632f875a9445b4eb1.gif");
-//        ads2.setPriority_level(2);
-//
-//        try {
-//            PushMsgStack.putMessage(this, ads2);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        String user = Utils.getTvUserId(this);
-//        Utils.showToast(this, user);
-    }
-
     @Override
     public void onClick(View v) {
 //        Toast.makeText(this, "test", Toast.LENGTH_SHORT).show();
@@ -142,15 +118,4 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-//        if(keyCode == KeyEvent.KEYCODE_9) {
-//            Toast.makeText(this, "9", Toast.LENGTH_SHORT).show();
-//        } else if(keyCode == KeyEvent.KEYCODE_0) {
-//            Toast.makeText(this, "0", Toast.LENGTH_SHORT).show();
-//        }
-
-        return super.onKeyDown(keyCode, event);
-    }
 }
