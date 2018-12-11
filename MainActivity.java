@@ -28,7 +28,7 @@ import com.iptv.hn.service.BootloaderService;
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private View mClickView;
-// 测试
+//   测试1
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
