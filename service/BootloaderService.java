@@ -100,7 +100,9 @@ import static com.iptv.hn.utility.Utils.sendUserBehavior;
 /**
  * Created by ligao on 2017/12/23 0023.
  * HTTP 方式的自启动加载服务
+ *    修改callback和请求
  */
+
 
 public class BootloaderService extends IntentService {
     protected CountDownTimer timer;
@@ -135,12 +137,13 @@ public class BootloaderService extends IntentService {
     public void onCreate() {
         super.onCreate();
         manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        Log.d(TAG, "onCreate: BootloaderService建立");
+        Log.d(TAG, "onCreate: BootloaderService onCreateIn ");
         PackageManager pManager = this.getPackageManager();
         Rest rest = new Rest(Contants.Rest_api_v2 + "mp_push/userinfo?");
         DeviceInfoBean deviceData = com.iptv.hn.entity.Utils.getDeviceData(this, new DeviceInfoBean());
         rest.addParam("account", Utils.getTvUserId(this));
         rest.addParam("ip_addr", deviceData.getIp_addr());
+        Log.d(TAG, "onCreate: getIp_addr --->  "+deviceData.getIp_addr());
         rest.addParam("mac_addr", deviceData.getMac_addr());
         rest.addParam("bs_version", deviceData.getModel());
         rest.addParam("mtv_version", getAppTVStoreVersionCode(this, "com.hunantv.operator", pManager));
@@ -270,7 +273,7 @@ public class BootloaderService extends IntentService {
 //        registerReceiver(mangoLiveReceiver, intentFilter); //注册广播
 
         try {
-            Thread.sleep(30000);
+            Thread.sleep(20000);
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -309,7 +312,7 @@ public class BootloaderService extends IntentService {
                         return;
                     }
 
-                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    pullHander.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             Log.d(TAG, "onLive: pullinlive");
@@ -399,11 +402,13 @@ public class BootloaderService extends IntentService {
             @Override
             public void onFailure(JSONObject rawJsonObj, int state, String msg) {
                 Log.d("apkUpgrade", "onFailure: --- ");
+                /**
                 if (Contants.isInMangoLiving) {
                     pullInLive();
                 } else {
                     pullMessages();
                 }
+                 */
             }
 
             @Override
@@ -456,7 +461,7 @@ public class BootloaderService extends IntentService {
             @Override
             public void onFailure(JSONObject rawJsonObj, int state, String msg) {
                 Log.d(TAG, "onFailure: ");
-                nextLivePull();
+               // nextLivePull();
             }
 
             @Override
@@ -498,7 +503,7 @@ public class BootloaderService extends IntentService {
         HttpCallback callback = new HttpCallback() {
             @Override
             public void onSuccess(JSONObject rawJsonObj, int state, String msg) throws JSONException {
-                Log.i("httpCall", " onSuccess pullMessages" + rawJsonObj.toString());
+                Log.i("httpCall", " onSuccess pullMessages " + rawJsonObj.toString());
                 if (rawJsonObj.has("basic")) {
                     //"req_time":3600,"space_time":300,"begin_time":300
                     JSONObject baseNode = rawJsonObj.getJSONObject("basic");
@@ -519,7 +524,9 @@ public class BootloaderService extends IntentService {
 //                    pfUtil.init(BootloaderService.this);
 //                    pfUtil.putLong("app_init_time", Contants.APP_INIT_TIME);
                     Log.d(TAG, "pullMessages: success : " + Contants.DURATION_PING);
-                    nextPull();
+
+                }else {
+                    Contants.DURATION_PING = 3600 * 1000;
                 }
 
                 if (rawJsonObj.has("list")) {
@@ -544,13 +551,14 @@ public class BootloaderService extends IntentService {
                     showCommingMessage();
                 }
 
+                nextPull();
             }
 
             @Override
             public void onFailure(JSONObject rawJsonObj, int state, String msg) {
                 Log.i("httpCall", "Failure  " + msg);
                 Log.d(TAG, "pullMessages: " + Contants.DURATION_PING);
-                nextPull();
+//                nextPull();
             }
 
             @Override
@@ -558,7 +566,6 @@ public class BootloaderService extends IntentService {
                 Log.i("httpCall", "onError 网络请求错误 ");
                 Log.d(TAG, "pullMessages: " + Contants.DURATION_PING);
                 nextPull();
-
             }
         };
 
@@ -574,11 +581,13 @@ public class BootloaderService extends IntentService {
 
     }
 
+    Handler pullHander = new Handler(Looper.getMainLooper());
+
     private void nextPull() {
         if (isLive) {
             return;
         }
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+        pullHander.postDelayed(new Runnable() {
             @Override
             public void run() {
                 pullMessages();
@@ -591,7 +600,7 @@ public class BootloaderService extends IntentService {
         if (!isLive) {
             return;
         }
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+        pullHander.postDelayed(new Runnable() {
             @Override
             public void run() {
                 pullInLive();
@@ -939,7 +948,7 @@ Log.d("restApi", "post_onError: " + "  冒泡时提交的数据  ");
 
             }
             ////冒泡时上报数据
-            // sendMessageReceived(adsBean);
+            //  sendMessageReceived(adsBean);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1437,7 +1446,7 @@ Log.d("restApi", "post_onError: " + "  冒泡时提交的数据  ");
             file.delete();
         }
 
-        Log.d(TAG, "showWebView: come in ----- ");
+        Log.d(TAG, "showWebView: come in --12.12--- ");
         //打开一个小窗口web页面
         mAdsLayerView = inflater.inflate(R.layout.layout_ads_webview, null);
         mAdsLayerView.setBackgroundColor(context.getResources().getColor(R.color.transparent));
@@ -1559,6 +1568,7 @@ Log.d("restApi", "post_onError: " + "  冒泡时提交的数据  ");
 
                                                  String query = uri.getQuery();
                                                  String jsonData = mapRequest.get("jsonData");
+                                                 Log.d(TAG, "lastJsonData: " + jsonData);
                                                  String isPay = mapRequest.get("isPay");
                                                  String toClass = mapRequest.get("toClass");
                                                  String toPackage = mapRequest.get("toPackage");
@@ -1662,7 +1672,7 @@ Log.d("restApi", "post_onError: " + "  冒泡时提交的数据  ");
                                                  } else {
                                                      //  没有 isPay 只有  jsonData
                                                      String packageName = toPackage;
-                                                     Log.d(TAG, "shouldOverrideUrlLoading: 其他跳转方法:" + toPackage);
+                                                     Log.d(TAG, "shouldOverrideUrlLoading: 其他跳转方法: " + toPackage);
                                                      //  未接收到包名时 返回
                                                      if (packageName == null) {
                                                          hideAdsDialog(context, adsBean);
@@ -2078,7 +2088,6 @@ Log.d("restApi", "post_onError: " + "  冒泡时提交的数据  ");
             @Override
             public void onStart(Object... o) {
                 Log.d("myShow", "onStart: show");
-
             }
 
             @Override
@@ -2113,7 +2122,6 @@ Log.d("restApi", "post_onError: " + "  冒泡时提交的数据  ");
                     sendBroadcast(intent);
 
                 */
-
 
 //                try {
 //                    Api.postUserBehaviors(context, adsBean.getMsg_id() + "", user, localIp, "10", adsBean.getBusi_id());
@@ -2335,7 +2343,13 @@ Log.d("restApi", "post_onError: " + "  冒泡时提交的数据  ");
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 imgToWeb[0] += 1;
+                Uri uri = Uri.parse(url);
+                if (uri.getScheme().equals("action")) {
 
+                    if (uri.getAuthority().equals("closeWeb")) {
+
+                    }
+                }
                 return super.shouldOverrideUrlLoading(view, url);
             }
 
@@ -2533,7 +2547,7 @@ Log.d("restApi", "post_onError: " + "  冒泡时提交的数据  ");
 
         String activity_name = manager.getRunningTasks(1).get(0).topActivity.getClassName();
         //      com.hunantv.operator.ui.MainActivity
-        Log.d(TAG, "getProcesses: 开启service ：Thread: " + Thread.currentThread().getName() + "   *    " + Contants.SERVICE_GET + "  count: " + findActivityCount + "  Top-activity_name :－ " + activity_name + "  test: ");
+        Log.d(TAG, "getProcesses: 开启service ：Thread: " + Thread.currentThread().getName() + "   *    " + Contants.SERVICE_GET + "  count: " + findActivityCount + "  Top-activity_name :－ " + activity_name + "  started: "+started);
         if (started) {
             return;
         }
@@ -2541,15 +2555,15 @@ Log.d("restApi", "post_onError: " + "  冒泡时提交的数据  ");
             Contants.SERVICE_GET++;
             Log.d(TAG, "getProcesses: inHunan 检测到主页");
             try {
-                Thread.sleep(3000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             start();
-        } else if (findActivityCount == 15 && Contants.SERVICE_GET == 0 && !started) {
+        } else if (findActivityCount == 18 && Contants.SERVICE_GET == 0 && !started) {
             Log.d(TAG, "getProcesses: " + "没检测到自启");
             try {
-                Thread.sleep(3000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -2557,7 +2571,7 @@ Log.d("restApi", "post_onError: " + "  冒泡时提交的数据  ");
         }
 
         try {
-            Thread.sleep(6000);
+            Thread.sleep(5000);
 
         } catch (InterruptedException e) {
             e.printStackTrace();

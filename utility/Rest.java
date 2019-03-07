@@ -28,9 +28,9 @@ import okhttp3.Response;
 public class Rest {
 
 	private OkHttpClient client = new OkHttpClient.Builder()
-			.connectTimeout(12,TimeUnit.SECONDS)
-			.readTimeout(12,TimeUnit.SECONDS)
-			.writeTimeout(12,TimeUnit.SECONDS).build();
+			.connectTimeout(10,TimeUnit.SECONDS)
+			.readTimeout(10,TimeUnit.SECONDS)
+			.writeTimeout(10,TimeUnit.SECONDS).build();
 
 	private RequestBody formBody;
 
@@ -144,6 +144,7 @@ public class Rest {
 									}
 								} else if (message.what == STATUS_PARAM_ERROR || message.what == STATUS_QUERY_ERROR) {
 									callback.onFailure(raw, message.what, "");
+									callback.onError();
 								} else {
 									Log.e("test2",message.toString());
 									callback.onError();

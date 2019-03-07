@@ -198,5 +198,4 @@ public class AdsKeyEventHandler {
         context.startActivity(intent);
     }
 
-
 }

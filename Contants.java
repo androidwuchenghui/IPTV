@@ -7,14 +7,6 @@ public class Contants {
 
     public static final String IPTV_REST_API = "http://124.232.135.241:8080/";
 
-    //http 方式的 api
-//     public static final String Rest_api_v2 = "http://124.232.153.82:9090/";
-//正式地址
-//   public static final String Rest_api_v2 = "http://124.232.135.246:9090/";
-   //测试地址
-//    public static final String Rest_api_v2 =  "http://124.232.135.241:8002/";
-    //   新地址
-//    public static final String Rest_api_v2 =  "http://124.232.135.241:8009/";
     public static final String Rest_api_v3 =  "http://124.232.135.241:8080/";
 
     //  ---  上线正式地址
@@ -41,7 +33,7 @@ public class Contants {
 
     public static int DURATION_TOAST_MESSAGE = 1000 * 30; //默认消息弹窗间隔时间 space_time
 
-    public static int DURATION_PING = 60 * 1000; //默认60秒一次心跳
+    public static int DURATION_PING = 3600 * 1000; //默认60秒一次心跳
 
     public static long LAST_PING_TIMESTAMP = System.currentTimeMillis();
 
